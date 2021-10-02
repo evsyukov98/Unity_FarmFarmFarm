@@ -5,10 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class PlayerContoller : MonoBehaviour
 {
-    [SerializeField] private Rigidbody _rigidbody;
-    [SerializeField] private FixedJoystick _joystick;
+    [SerializeField] private Rigidbody rigidbody;
+    [SerializeField] private FixedJoystick joystick;
 
-    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float moveSpeed;
     
     void Start()
     {
@@ -17,10 +17,7 @@ public class PlayerContoller : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _rigidbody.velocity = new Vector3(
-            _joystick.Horizontal * _moveSpeed,
-            _rigidbody.velocity.y,
-            _joystick.Vertical * _moveSpeed);
+        MovePlayerWithJoystick();
     }
 
     void Update()
@@ -30,13 +27,13 @@ public class PlayerContoller : MonoBehaviour
 
     private void MovePlayerWithJoystick()
     {
-        var horizontalSpeed = GetJoystickInputXZ().Item1 * _moveSpeed;
-        var verticalSpeed = GetJoystickInputXZ().Item2 * _moveSpeed;
-        _rigidbody.velocity = new Vector3(horizontalSpeed, _rigidbody.velocity.y, verticalSpeed);
+        var horizontalSpeed = GetJoystickInputXZ().Item1 * moveSpeed;
+        var verticalSpeed = GetJoystickInputXZ().Item2 * moveSpeed;
+        rigidbody.velocity = new Vector3(horizontalSpeed, rigidbody.velocity.y, verticalSpeed);
     }
     
     private (float, float) GetJoystickInputXZ()
     {
-        return (_joystick.Horizontal, _joystick.Vertical);
+        return (joystick.Horizontal, joystick.Vertical);
     }
 }
