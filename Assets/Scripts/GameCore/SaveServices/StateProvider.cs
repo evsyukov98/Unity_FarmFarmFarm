@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 public class StateProvider : IStateProvider
 {
@@ -36,5 +37,12 @@ public interface IStateProvider
 
 public interface IState
 {
+
+}
+
+public class SaveData
+{
+    // Список стейтов
+    public Dictionary<int, IState> States;
 
 }
