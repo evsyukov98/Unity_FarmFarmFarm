@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+
 
 public class StateProvider : IStateProvider
 {
@@ -12,17 +15,44 @@ public class StateProvider : IStateProvider
 
     public bool TryGetState<TState>(Type type, out TState state) where TState : class, IState
     {
-        throw new NotImplementedException();
+        return _saveData.TryGetState(type, out state);
     }
 
     public void RegisterState<TState>(Type type, TState state) where TState : class, IState
     {
-        throw new NotImplementedException();
+        var key = type.ToString();
+
+        if (!_saveData.States.ContainsKey(key))
+        {
+            if (state != null)
+                _saveData.States.Add(key, state);
+        }
+        else
+        {
+            if (state == null)
+                _saveData.States.Remove(key);
+            else
+                _saveData.States[key] = state;
+        }
     }
 
     public void Save(bool sendToServer = false)
     {
-        throw new NotImplementedException();
+        var encodedData = FromStatesToByteArray(_saveData);
+        
+        LocalSaveProvider.SaveByteSaves(encodedData);
+
+        
+    }
+    
+    public static byte[] FromStatesToByteArray(SaveData saveData)
+    {
+        //var jsonNuget = JsonConvert.SerializeObject(saveData);
+        var jsonUnity = JsonUtility.ToJson(saveData);
+        var jsonBytes = Encoding.UTF8.GetBytes(jsonUnity);
+
+        var base64 = Convert.ToBase64String(jsonBytes);
+        return Encoding.UTF8.GetBytes(base64);
     }
 }
 
@@ -43,6 +73,20 @@ public interface IState
 public class SaveData
 {
     // Список стейтов
-    public Dictionary<int, IState> States;
+    public Dictionary<string, IState> States;
+    
+    public bool TryGetState<TState>(Type type, out TState state) where TState : class, IState
+    {
+        state = null;
 
+        var key = type.ToString();
+
+        if (States.ContainsKey(key))
+        {
+            state = (TState)States[key];
+            return true;
+        }
+
+        return false;
+    }
 }

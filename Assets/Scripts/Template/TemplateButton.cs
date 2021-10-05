@@ -26,12 +26,17 @@ public class TemplateButton : MonoBehaviour
     {
         _templateManager.ConsoleWrite();
 
-        Dictionary<int, IState> dictForSaves = new Dictionary<int, IState>();
-        dictForSaves.Add(1,new StateNoOne());
-        dictForSaves.Add(2,new StateNoTwo());
+        Dictionary<string, IState> dictForSaves = new Dictionary<string, IState>();
+        dictForSaves.Add(typeof(StateNoOne).ToString(),new StateNoOne());
+        dictForSaves.Add(typeof(StateNoTwo).ToString(),new StateNoTwo());
 
+        SaveData saveData = new SaveData {States = dictForSaves};
         
-        LocalSaveProvider.SaveSaves(dictForSaves);
+        LocalSaveProvider.SaveObjectSaves(saveData);
+
+        /*var byteSaves = StateProvider.FromStatesToByteArray(saveData);
+        
+        LocalSaveProvider.SaveByteSaves(byteSaves);*/
     }
 }
 
