@@ -2,13 +2,13 @@ using UnityEngine;
 
 public interface ITemplateManager
 {
-    void ConsoleWrite();
+    void ConsoleWrite(string message);
 }
 
 public class TemplateManager : ITemplateManager
 {
-    public void ConsoleWrite()
+    public void ConsoleWrite(string message)
     {
-        Debug.Log("Template alert");
+        Debug.Log(message);
     }
 }

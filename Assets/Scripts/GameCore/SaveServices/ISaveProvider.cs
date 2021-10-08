@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 
-public interface ISaveProvider
+namespace SaveServices
 {
-    Dictionary<int,IState> LoadSave();
-    void SaveSaves(Dictionary<int,IState>  saves);
-    void RemoveSaves();
+    public interface ISaveProvider
+    {
+        Dictionary<int, IState> LoadSave();
+        void SaveSaves(Dictionary<int, IState> saves);
+        void RemoveSaves();
+    }
 }

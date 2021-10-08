@@ -1,40 +1,46 @@
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 using UnityEngine;
 
-public static class LocalSaveProvider
+namespace SaveServices
 {
-    private static readonly string _path = Application.streamingAssetsPath + "/SavesBinaryTwo.bin";
+    public static class LocalSaveProvider
+    {
+        private static readonly string _pathJson = Application.streamingAssetsPath + "/SavesJson.json";
 
-    public static Dictionary<int, IState> LoadSave()
-    {
-        //TODO: JsonUtility не поддерживает сохранение словарей.
-        //TODO: Как вариант думаю сохранять словарь в бинарном формате и вытаскивать его в бинарке тоже после конвертировать его в словарь.
-        var loadedSaves = JsonUtility.FromJson<Dictionary<int, IState>>(File.ReadAllText(_path));
-        return loadedSaves;
-    }
+        public static SaveData LoadSave()
+        {
+            SaveData saveData = JsonConvert.DeserializeObject<SaveData>(
+                File.ReadAllText(_pathJson), 
+                new JsonSerializerSettings 
+            { 
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+            });
 
-    public static void SaveByteSaves(byte[] byteArray)
-    {
-        //TODO: реализация мк 
-        using FileStream file = File.Open(_path, FileMode.Create);
-        file.Write(byteArray, 0, byteArray.Length);
-    }
-    
-    public static void SaveObjectSaves(SaveData saveData)
-    {
-        //TODO: реализация ютубера 
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        FileStream fileStream = new FileStream(_path, FileMode.Create);
+            return saveData;
+        }
+
+        public static void SaveObjectToJson(SaveData saveData)
+        {
+            JsonSerializer serializer = new JsonSerializer
+            {
+                TypeNameHandling = TypeNameHandling.Auto, 
+                Formatting = Formatting.Indented
+            };
+
+            using (StreamWriter sw = new StreamWriter(_pathJson))
+            {
+                using (JsonWriter writer = new JsonTextWriter(sw)) 
+                { 
+                    serializer.Serialize(writer, saveData, typeof(SaveData)); 
+                }
+            }
+        }
         
-        binaryFormatter.Serialize(fileStream, saveData);
-        
-        fileStream.Close();
-    }
-
-    public static void RemoveSaves()
-    {
-        //TODO: remove saves
+        public static void RemoveSaves()
+        {
+            File.Delete(_pathJson);
+        }
     }
 }
