@@ -1,6 +1,7 @@
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
+using File = System.IO.File;
 
 namespace SaveServices
 {
@@ -10,6 +11,11 @@ namespace SaveServices
 
         public static SaveData LoadSave()
         {
+            if (!File.Exists(_pathJson))
+            {
+                return null;
+            }
+            
             SaveData saveData = JsonConvert.DeserializeObject<SaveData>(
                 File.ReadAllText(_pathJson), 
                 new JsonSerializerSettings 

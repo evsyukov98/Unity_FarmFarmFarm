@@ -4,8 +4,5 @@ using UnityEngine;
 
 public class GameCore : ImmortalMonoSingleton<GameCore>
 {
-    private void Awake()
-    {
-        
-    }
+    
 }
